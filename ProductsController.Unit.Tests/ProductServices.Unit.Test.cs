@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace ProductsController.Unit.Tests
 {
     [TestFixture]
-    class ProductServiceTests
+    public class ProductServiceTests
     {
         private ProductService _productService;
 

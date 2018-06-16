@@ -4,6 +4,7 @@ using NUnit.Framework;
 using ECommerce.Controllers;
 using ECommerce.Models;
 using ECommerce.Services;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 namespace ProductsController.Unit.Tests
@@ -23,8 +24,8 @@ namespace ProductsController.Unit.Tests
         [Test]
         public void ShouldGetAllProducts()
         {
-            var products = _productsController.Get();
-
+            var actionResult = _productsController.Get() as OkObjectResult;
+            var products = actionResult.Value as List<Product>;
             Assert.That(products.Count, Is.EqualTo(2));
 
             Assert.That(products[0].Id, Is.EqualTo(1) );
@@ -39,12 +40,12 @@ namespace ProductsController.Unit.Tests
         [Test]
         public void ShouldCreateProduct()
         {
-            Product expectedProduct = new Product(1,"Product1",10);
+            var expectedProduct = new Product(1,"Product1",10);
 
-            _productServiceMock.Setup(productService=> productService.Create(expectedProduct)).Returns(expectedProduct).Callback<Product>(product => _assertEqualProduct(product, expectedProduct));
-            
-            var actualProduct = _productsController.Create(expectedProduct);
+            _productServiceMock.Setup(productService => productService.Create(expectedProduct)).Returns(expectedProduct).Callback<Product>(product => _assertEqualProduct(product, expectedProduct));
 
+            var createdResult = _productsController.Create(expectedProduct) as CreatedResult;
+            var actualProduct = createdResult.Value as Product;
             _productServiceMock.Verify(productService => productService.Create(It.Is<Product>(product => _assertEqualProduct(product, expectedProduct))), Times.Once);
             Assert.That(expectedProduct.Id, Is.EqualTo(actualProduct.Id));
             Assert.That(expectedProduct.Name, Is.EqualTo(actualProduct.Name));

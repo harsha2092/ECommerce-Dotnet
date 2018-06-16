@@ -20,15 +20,16 @@ namespace ECommerce.Controllers
         }
 
         [HttpGet]
-        public List<Product> Get()
+        public IActionResult Get()
         {
-            return new List<Product>() {new Product(1, "Product1", 10), new Product(2, "Product2", 20)};
+            return Ok(new List<Product>() { new Product(1, "Product1", 10), new Product(2, "Product2", 20) });
         }
 
         [HttpPost]
-        public Product Create(Product product)
+        public IActionResult Create(Product product)
         {
-            return _productService.Create(product);
+            Product createdProduct = _productService.Create(product);
+            return Created($"/api/products/{createdProduct.Id}", createdProduct);
         }
     }
 }
